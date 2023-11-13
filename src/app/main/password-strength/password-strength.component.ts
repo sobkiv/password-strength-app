@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import { PasswordStrength } from '../../model/PasswordStrength.model';
 
 @Component({
   selector: 'app-password-strength',
@@ -9,7 +10,7 @@ import { debounceTime } from 'rxjs/operators';
 })
 export class PasswordStrengthComponent {
   public passwordControl = new FormControl('');
-  public passwordStrength: 'week' | 'easy' | 'medium' | 'strong';
+  public passwordStrength: 'weak' | 'easy' | 'medium' | 'strong';
   public showPassword = false;
 
   private readonly minLength = 8;
@@ -26,7 +27,7 @@ export class PasswordStrengthComponent {
     });
   }
 
-  private updatePasswordStrength(): void {
+  public updatePasswordStrength(): void {
     const password = this.passwordControl.value;
     const containsLetters = this.regex.containsLetters.test(password);
     const containsNumbers = this.regex.containsNumbers.test(password);
@@ -40,13 +41,13 @@ export class PasswordStrengthComponent {
     if (!password) {
       this.passwordStrength = null;
     } else if (password.length < this.minLength) {
-      this.passwordStrength = 'week';
+      this.passwordStrength = PasswordStrength.Weak;
     } else if (isStrong) {
-      this.passwordStrength = 'strong';
+      this.passwordStrength = PasswordStrength.Strong;
     } else if (password.length >= this.minLength && !isMedium) {
-      this.passwordStrength = 'easy';
+      this.passwordStrength = PasswordStrength.Easy;
     } else {
-      this.passwordStrength = 'medium';
+      this.passwordStrength = PasswordStrength.Medium;
     }
   }
 
